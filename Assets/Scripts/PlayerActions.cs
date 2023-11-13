@@ -11,6 +11,7 @@ public class PlayerActions : MonoBehaviour
     private Rigidbody rb;
     private Transform playerTransform;
     private bool canJump = false;
+    private float throwForce = 20f;
 
     private float mouseX = 0f;
     private float mouseY = 0f;
@@ -47,20 +48,22 @@ public class PlayerActions : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.E)) {
-            Interact();
+            UseObject();
         }
     }
 
-    private void Interact() {
+    private void UseObject() {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 5f, layermask)) {
-            var victim = hit.transform.gameObject;
-            if (victim.parent = playerTransform.parent) {
-                victim.GetComponent<Transform>().SetParent(playerTransform.gameObject, false);
-                victim.transform.position = rb.velocity + new Vector3(0f, 5f, 0f);
+            Transform victim = hit.transform;
+            if (victim.parent != playerTransform) {
+                victim.SetParent(playerTransform, false);
+                victim.GetComponent<Rigidbody>().useGravity = false;
+                victim.position = playerTransform.position + playerTransform.forward * 3f;
             } else {
                 victim.SetParent(null, true);
-                victim.GetComponent<Rigidbody>().velocity = new Vector3(5f, 0f, 0f);
+                victim.GetComponent<Rigidbody>().useGravity = true;
+                victim.GetComponent<Rigidbody>().velocity = playerTransform.forward * throwForce;
             }
         }
     }
