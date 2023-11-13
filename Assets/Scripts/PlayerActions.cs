@@ -56,21 +56,24 @@ public class PlayerActions : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 5f, layermask)) {
             Transform victim = hit.transform;
-            if (victim.parent != playerTransform) {
-                victim.SetParent(playerTransform, false);
-                victim.GetComponent<Rigidbody>().useGravity = false;
-                victim.position = playerTransform.position + playerTransform.forward * 3f;
-            } else {
-                victim.SetParent(null, true);
-                victim.GetComponent<Rigidbody>().useGravity = true;
-                victim.GetComponent<Rigidbody>().velocity = playerTransform.forward * throwForce;
+            if (victim.gameObject.CompareTag("Throwable")) {
+                if (victim.parent != playerTransform) {
+                    victim.SetParent(playerTransform, false);
+                    victim.GetComponent<Rigidbody>().useGravity = false;
+                    victim.position = playerTransform.position + playerTransform.forward * 1.5f;
+                } else {
+                    victim.SetParent(null, true);
+                    victim.GetComponent<Rigidbody>().useGravity = true;
+                    victim.GetComponent<Rigidbody>().velocity = playerTransform.forward * throwForce;
+                }
             }
+            
         }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Floor")) {
+        if (other.gameObject.CompareTag("Floor") || other.gameObject.CompareTag("Throwable")) {
             canJump = true;
         }
     }
