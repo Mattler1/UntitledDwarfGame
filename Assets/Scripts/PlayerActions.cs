@@ -15,6 +15,8 @@ public class PlayerActions : MonoBehaviour
 
     private float mouseX = 0f;
     private float mouseY = 0f;
+
+    private bool enemyJumpLimitReached = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -73,8 +75,13 @@ public class PlayerActions : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Floor") || other.gameObject.CompareTag("Throwable")) {
+        if (other.gameObject.CompareTag("Floor")) {
             canJump = true;
+            enemyJumpLimitReached = false;
+        }
+        if (other.gameObject.CompareTag("Throwable") && !enemyJumpLimitReached) {
+            canJump = true;
+            enemyJumpLimitReached = true;
         }
     }
 }
