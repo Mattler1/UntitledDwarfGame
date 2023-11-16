@@ -13,6 +13,6 @@ Do 'git remote add origin "https://github.com/Mattler1/UntitledDwarfGame"
 git pull origin master
 
 # Pushing updates
-git add .
-git commit -m "Your commit message"
+git add . <br>
+git commit -m "Your commit message" <br>
 git push origin master
