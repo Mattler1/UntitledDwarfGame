@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerActions : MonoBehaviour
@@ -11,12 +9,13 @@ public class PlayerActions : MonoBehaviour
     private Rigidbody rb;
     private Transform playerTransform;
     private bool canJump = false;
-    private float throwForce = 20f;
+    private readonly float throwForce = 20f;
 
     private float mouseX = 0f;
     private float mouseY = 0f;
 
-    private bool enemyJumpLimitReached = false;
+    private GameObject victim;
+    public Transform holdPosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,43 +44,60 @@ public class PlayerActions : MonoBehaviour
         rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);
 
         if (Input.GetKeyDown(KeyCode.Space) && canJump) {
-            rb.velocity = new Vector3(moveVelocity.x, 5f, moveVelocity.z);
+            rb.velocity = new Vector3(rb.velocity.x, 5f, rb.velocity.z);
             canJump = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.E)) {
-            UseObject();
+        if (victim != null)
+        {
+            victim.transform.SetPositionAndRotation(holdPosition.transform.position, playerTransform.rotation);
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                ThrowObject();
+            }
+        } else
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                PickUpObject();
+            }
         }
     }
 
-    private void UseObject() {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 5f, layermask)) {
-            Transform victim = hit.transform;
-            if (victim.gameObject.CompareTag("Throwable")) {
-                if (victim.parent != playerTransform) {
-                    victim.SetParent(playerTransform, false);
-                    victim.GetComponent<Rigidbody>().useGravity = false;
-                    victim.position = playerTransform.position + playerTransform.forward * 1.5f;
-                } else {
-                    victim.SetParent(null, true);
-                    victim.GetComponent<Rigidbody>().useGravity = true;
-                    victim.GetComponent<Rigidbody>().velocity = playerTransform.forward * throwForce;
+    private void PickUpObject() {
+        if (victim == null)
+        {
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 5f, layermask))
+            {
+                if (hit.collider.gameObject.CompareTag("Throwable"))
+                {
+                    victim = hit.collider.gameObject;
+                    if (victim.transform != playerTransform)
+                    {
+                        victim.transform.parent = holdPosition.transform;
+                        victim.transform.rotation = playerTransform.rotation;
+                        Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponentInParent<Collider>(), true);
+                    }
                 }
             }
-            
+        }
+    }
+
+    private void ThrowObject()
+    {
+        if (victim != null)
+        {
+            Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponentInParent<Collider>(), false);
+            victim.transform.parent = null;
+            victim.GetComponent<Rigidbody>().velocity = playerCamera.transform.forward * throwForce;
+            victim = null;
         }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Floor")) {
+        if (other.gameObject.CompareTag("Floor") || other.gameObject.CompareTag("Throwable")) {
             canJump = true;
-            enemyJumpLimitReached = false;
-        }
-        if (other.gameObject.CompareTag("Throwable") && !enemyJumpLimitReached) {
-            canJump = true;
-            enemyJumpLimitReached = true;
         }
     }
 }
