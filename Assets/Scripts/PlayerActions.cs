@@ -5,8 +5,6 @@ public class PlayerActions : MonoBehaviour
     public float moveSpeed = 5f;
     public float rotationSpeed = 2f;
     public LayerMask layermask;
-    public float playerHealthCurrent;
-    private float playerHealthMax = 100f;
     private Camera playerCamera;
     private Rigidbody rb;
     private Transform playerTransform;
