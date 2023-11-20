@@ -1,20 +1,25 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class RangedEnemy : MonoBehaviour
 {
-    private UnityEngine.AI.NavMeshAgent agent;
+    private NavMeshAgent agent;
     public float attackRange;
-    private readonly Transform playerTransform = GameObject.Find("PlayerPrefab").GetComponent<Transform>();
+    private Transform playerTransform;
     private readonly List<Vector3> destinations = new();
     private readonly float timeToReload = 5f;
     private bool isRunningAway = false;
     private bool bulletReady = false;
+    public GameObject projectileToFire;
+    private Vector3 firePosition;
     // Start is called before the first frame update
     void Start()
     {
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        firePosition = this.GetComponent<Transform>().Find("FirePosition").position;
+        agent = GetComponent<NavMeshAgent>();
+        playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         StartCoroutine(PrepareBullet());
     }
 
@@ -41,12 +46,23 @@ public class RangedEnemy : MonoBehaviour
                 ChooseNewDestination();
             }
         }
+
+        if (!isRunningAway)
+        {
+            Vector3 predictedPosition = playerTransform.position;
+            Vector3 playerVelocity = playerTransform.GetComponent<Rigidbody>().velocity;
+
+            playerVelocity *= Time.deltaTime;
+            predictedPosition += playerVelocity;
+
+            transform.LookAt(predictedPosition);
+        }
     }
 
     private void SetNewDestinations()
     {
         
-        if (Vector3.Distance(transform.position, playerTransform.position) <= 10f)
+        if (Vector3.Distance(transform.position, playerTransform.position) <= attackRange * 1.5f)
         {
             isRunningAway = true;
             destinations.Add(transform.position - ((Quaternion.AngleAxis(Random.Range(0, 179), Vector3.up) * (playerTransform.position - transform.position).normalized)) * 10f);
@@ -68,18 +84,10 @@ public class RangedEnemy : MonoBehaviour
 
     private void FireAtPlayer()
     {
-        Vector3 predictedPosition = playerTransform.position;
-        Vector3 velocity = playerTransform.GetComponent<Rigidbody>().velocity;
-
-        velocity *= Time.deltaTime;
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-        predictedPosition += velocity;
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
-
         if (bulletReady && !isRunningAway)
         {
-            //Wait for a projectile object to be available to fire before finishing this.
-            return;
+            GameObject firedProjectile = Instantiate(projectileToFire, firePosition, transform.rotation);
+            firedProjectile.GetComponent<Rigidbody>().velocity = Vector3.forward * 2f;
         }
     }
 
