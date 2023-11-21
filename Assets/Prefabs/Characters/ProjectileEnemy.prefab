@@ -209,4 +209,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6360a6ba72bfcbd4787e55046e1a23c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 5
+  attackRange: 3
+  projectileToFire: {fileID: 1697217734593142711, guid: f7ca53bf229f9af4486c0df8551c03f2, type: 3}

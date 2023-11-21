@@ -6,18 +6,18 @@ using UnityEngine.AI;
 public class RangedEnemy : MonoBehaviour
 {
     private NavMeshAgent agent;
-    public float attackRange;
+    public float runDistance;
     private Transform playerTransform;
     private readonly List<Vector3> destinations = new();
     private readonly float timeToReload = 5f;
     private bool isRunningAway = false;
     private bool bulletReady = false;
     public GameObject projectileToFire;
-    private Vector3 firePosition;
+    private Transform firePosition;
     // Start is called before the first frame update
     void Start()
     {
-        firePosition = this.GetComponent<Transform>().Find("FirePosition").position;
+        firePosition = transform.Find("FirePosition");
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         StartCoroutine(PrepareBullet());
@@ -26,7 +26,7 @@ public class RangedEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, attackRange))
+        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity))
         {
             if (hit.transform.gameObject.CompareTag("Player"))
             {
@@ -54,6 +54,8 @@ public class RangedEnemy : MonoBehaviour
 
             playerVelocity *= Time.deltaTime;
             predictedPosition += playerVelocity;
+            predictedPosition.x -= 0.65f;
+            predictedPosition.z -= 1f;
 
             transform.LookAt(predictedPosition);
         }
@@ -62,16 +64,17 @@ public class RangedEnemy : MonoBehaviour
     private void SetNewDestinations()
     {
         
-        if (Vector3.Distance(transform.position, playerTransform.position) <= attackRange * 1.5f)
+        if (Vector3.Distance(transform.position, playerTransform.position) <= runDistance * 1.5f)
         {
             isRunningAway = true;
+            destinations.Clear();
             destinations.Add(transform.position - ((Quaternion.AngleAxis(Random.Range(0, 179), Vector3.up) * (playerTransform.position - transform.position).normalized)) * 10f);
         }
         else
         {
             isRunningAway = false;
-            destinations.Add(Vector3.Reflect(transform.position, (Vector3.left * 2f)));
-            destinations.Add(Vector3.Reflect(transform.position, (Vector3.right * 2f)));
+            destinations.Add(Vector3.Reflect(transform.position, (transform.right * -2f)));
+            destinations.Add(Vector3.Reflect(transform.position, (transform.right * 2f)));
         }
     }
 
@@ -86,8 +89,9 @@ public class RangedEnemy : MonoBehaviour
     {
         if (bulletReady && !isRunningAway)
         {
-            GameObject firedProjectile = Instantiate(projectileToFire, firePosition, transform.rotation);
-            firedProjectile.GetComponent<Rigidbody>().velocity = Vector3.forward * 2f;
+            GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
+            firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 5f;
+            bulletReady = false;
         }
     }
 
