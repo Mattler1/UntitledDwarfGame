@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6278020050843012233}
   - component: {fileID: 5248061236574808155}
   - component: {fileID: 3132721783375627847}
+  - component: {fileID: 1042075581116818571}
   m_Layer: 0
   m_Name: MeleeEnemy
   m_TagString: Enemy
@@ -130,6 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lastRememberedPosition: {x: 0, y: 0, z: 0}
+  isActive: 1
 --- !u!195 &3132721783375627847
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -152,3 +154,16 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1042075581116818571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7636832869059817898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8a1fea3c0085824d8931f1b1986ddb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 1

@@ -11,6 +11,8 @@ public class PlayerActions : MonoBehaviour
     private bool canJump = false;
     private readonly float throwForce = 20f;
 
+    private int hitsTaken = 0;
+    private readonly int maxHits = 5;
     private float mouseX = 0f;
     private float mouseY = 0f;
 
@@ -69,7 +71,7 @@ public class PlayerActions : MonoBehaviour
         {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 5f, layermask))
             {
-                if (hit.collider.gameObject.CompareTag("Throwable"))
+                if (hit.collider.gameObject.CompareTag("Throwable") || hit.collider.gameObject.CompareTag("Enemy") && !hit.collider.gameObject.GetComponent<EnemyProperties>().isActive)
                 {
                     victim = hit.collider.gameObject;
                     if (victim.transform != playerTransform)
@@ -96,8 +98,26 @@ public class PlayerActions : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Floor") || other.gameObject.CompareTag("Throwable")) {
+        if (other.gameObject.CompareTag("Floor") || other.gameObject.CompareTag("Throwable")) 
+        {
             canJump = true;
+        }
+        else if (other.gameObject.CompareTag("Enemy"))
+        {
+            if (!other.gameObject.GetComponent<EnemyProperties>().isActive)
+            {
+                canJump = true;
+            }
+            else
+            {
+                hitsTaken += 1;
+                other.gameObject.GetComponent<Rigidbody>().AddForce((transform.position - other.transform.position).normalized * 10f);
+            }
+        }
+        else if (other.gameObject.CompareTag("Projectile"))
+        {
+            hitsTaken += 1;
+            Object.Destroy(other.gameObject);
         }
     }
 }
