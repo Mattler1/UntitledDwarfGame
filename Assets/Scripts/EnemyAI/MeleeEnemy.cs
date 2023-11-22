@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,7 +19,7 @@ public class MeleeEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity) && properties.isActive)
+        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity) && !properties.canBeGrabbed)
         {
             if (hit.transform.gameObject.CompareTag("Player")) {
                 agent.SetDestination(playerTransform.position);
@@ -30,11 +29,9 @@ public class MeleeEnemy : MonoBehaviour
                 lastRememberedPosition = Vector3.zero;
             }
         }
-
-        if (!properties.isActive)
+        if (!agent.enabled)
         {
-            agent.ResetPath();
-            lastRememberedPosition = Vector3.zero;
+            StartCoroutine(ReenableCharacter());
         }
     }
 
@@ -42,7 +39,17 @@ public class MeleeEnemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Throwable") && other.gameObject.GetComponent<Rigidbody>().velocity != Vector3.zero)
         {
-            properties.isActive = false;
+            agent.enabled = false;
+            properties.canBeGrabbed = true;
+            lastRememberedPosition = Vector3.zero;
         }
+    }
+    
+    private IEnumerator ReenableCharacter()
+    {
+        yield return new WaitForSecondsRealtime(6.5f);
+        agent.enabled = true;
+        properties.canBeGrabbed = false;
+        StopCoroutine(ReenableCharacter());
     }
 }

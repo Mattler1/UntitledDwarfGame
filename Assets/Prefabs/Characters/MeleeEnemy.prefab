@@ -16,7 +16,8 @@ GameObject:
   - component: {fileID: 5248061236574808155}
   - component: {fileID: 3132721783375627847}
   - component: {fileID: 1042075581116818571}
-  m_Layer: 0
+  - component: {fileID: 4181657676767855694}
+  m_Layer: 3
   m_Name: MeleeEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -53,7 +54,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &156507958805434609
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -131,7 +132,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lastRememberedPosition: {x: 0, y: 0, z: 0}
-  isActive: 1
 --- !u!195 &3132721783375627847
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -166,4 +166,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8a1fea3c0085824d8931f1b1986ddb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 1
+  canBeGrabbed: 0
+--- !u!114 &4181657676767855694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7636832869059817898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b2fcc03721d96a4497265821c794700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

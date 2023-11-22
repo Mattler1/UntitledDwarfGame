@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerActions : MonoBehaviour
 {
@@ -71,7 +72,7 @@ public class PlayerActions : MonoBehaviour
         {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 5f, layermask))
             {
-                if (hit.collider.gameObject.CompareTag("Throwable") || hit.collider.gameObject.CompareTag("Enemy") && !hit.collider.gameObject.GetComponent<EnemyProperties>().isActive)
+                if (hit.collider.gameObject.CompareTag("Throwable") || hit.collider.gameObject.CompareTag("Enemy") && hit.collider.gameObject.GetComponent<EnemyProperties>().canBeGrabbed)
                 {
                     victim = hit.collider.gameObject;
                     if (victim.transform != playerTransform)
@@ -91,6 +92,10 @@ public class PlayerActions : MonoBehaviour
         {
             Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponentInParent<Collider>(), false);
             victim.transform.parent = null;
+            if (victim.TryGetComponent(out NavMeshObstacle obstacle))
+            {
+                obstacle.enabled = false;
+            }
             victim.GetComponent<Rigidbody>().velocity = playerCamera.transform.forward * throwForce;
             victim = null;
         }
@@ -104,14 +109,16 @@ public class PlayerActions : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Enemy"))
         {
-            if (!other.gameObject.GetComponent<EnemyProperties>().isActive)
+            if (other.gameObject.GetComponent<EnemyProperties>().canBeGrabbed)
             {
                 canJump = true;
             }
             else
             {
                 hitsTaken += 1;
+                other.gameObject.GetComponent<NavMeshAgent>().enabled = false;
                 other.gameObject.GetComponent<Rigidbody>().AddForce((transform.position - other.transform.position).normalized * 10f);
+                other.gameObject.GetComponent<NavMeshAgent>().enabled = true;
             }
         }
         else if (other.gameObject.CompareTag("Projectile"))

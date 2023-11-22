@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.VisualScripting;
 
 public class RangedEnemy : MonoBehaviour
 {
@@ -26,14 +27,6 @@ public class RangedEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity))
-        {
-            if (hit.transform.gameObject.CompareTag("Player"))
-            {
-                // I need a model for our chosen projectile.
-                FireAtPlayer();
-            }
-        }
         if (!agent.pathPending && agent.remainingDistance <= 0.5f)
         {
             if (destinations.Count <= 0)
@@ -85,25 +78,26 @@ public class RangedEnemy : MonoBehaviour
         destinations.Remove(chosenDestination);
     }
 
-    private void FireAtPlayer()
-    {
-        if (bulletReady && !isRunningAway)
-        {
-            GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
-            firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 5f;
-            bulletReady = false;
-        }
-    }
-
     private IEnumerator PrepareBullet()
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.1f);
             if (!bulletReady)
             {
                 yield return new WaitForSecondsRealtime(timeToReload);
                 bulletReady = true;
+            }
+            else if (!isRunningAway)
+            {
+                bulletReady = false;
+                GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
+                firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 10f;
+                yield return new WaitForSecondsRealtime(8f);
+                if (!firedProjectile.IsDestroyed())
+                {
+                    Object.Destroy(firedProjectile);
+                }
             }
         }
     }
