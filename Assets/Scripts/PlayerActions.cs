@@ -77,9 +77,13 @@ public class PlayerActions : MonoBehaviour
                     victim = hit.collider.gameObject;
                     if (victim.transform != playerTransform)
                     {
+                        if (victim.TryGetComponent(out EnemyProperties properties))
+                        {
+                            properties.isGrabbed = true;
+                        }
                         victim.transform.parent = holdPosition.transform;
                         victim.transform.rotation = playerTransform.rotation;
-                        Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponentInParent<Collider>(), true);
+                        Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponent<Collider>(), true);
                     }
                 }
             }
@@ -90,11 +94,15 @@ public class PlayerActions : MonoBehaviour
     {
         if (victim != null)
         {
-            Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponentInParent<Collider>(), false);
+            Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponent<Collider>(), false);
             victim.transform.parent = null;
             if (victim.TryGetComponent(out NavMeshObstacle obstacle))
             {
                 obstacle.enabled = false;
+            }
+            if (victim.TryGetComponent(out EnemyProperties properties))
+            {
+                properties.isGrabbed = false;
             }
             victim.GetComponent<Rigidbody>().velocity = playerCamera.transform.forward * throwForce;
             victim = null;

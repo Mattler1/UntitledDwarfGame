@@ -8,12 +8,15 @@ public class MeleeEnemy : MonoBehaviour
     public Vector3 lastRememberedPosition = Vector3.zero;
     private Transform playerTransform;
     private EnemyProperties properties;
+    private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         properties = GetComponent<EnemyProperties>();
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezePositionY;
     }
 
     // Update is called once per frame
@@ -42,14 +45,21 @@ public class MeleeEnemy : MonoBehaviour
             agent.enabled = false;
             properties.canBeGrabbed = true;
             lastRememberedPosition = Vector3.zero;
+            rb.constraints = RigidbodyConstraints.None;
         }
     }
-    
     private IEnumerator ReenableCharacter()
     {
-        yield return new WaitForSecondsRealtime(6.5f);
-        agent.enabled = true;
-        properties.canBeGrabbed = false;
-        StopCoroutine(ReenableCharacter());
+        if (!properties.isGrabbed)
+        {
+            yield return new WaitForSecondsRealtime(6.5f);
+            agent.enabled = true;
+            properties.canBeGrabbed = false;
+            StopCoroutine(ReenableCharacter());
+        }
+        else
+        {
+            yield return null;
+        }
     }
 }

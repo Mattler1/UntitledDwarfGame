@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using Unity.VisualScripting;
 
 public class RangedEnemy : MonoBehaviour
 {
@@ -15,6 +14,8 @@ public class RangedEnemy : MonoBehaviour
     private bool bulletReady = false;
     public GameObject projectileToFire;
     private Transform firePosition;
+    private Rigidbody rb;
+    private EnemyProperties properties;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,35 +23,43 @@ public class RangedEnemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         StartCoroutine(PrepareBullet());
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezePositionY;
+        properties = GetComponent<EnemyProperties>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!agent.pathPending && agent.remainingDistance <= 0.5f)
+        if (agent.enabled)
         {
-            if (destinations.Count <= 0)
+            if (!agent.pathPending && agent.remainingDistance <= 0.5f)
             {
-                SetNewDestinations();
-                ChooseNewDestination();
+                if (destinations.Count <= 0)
+                {
+                    SetNewDestinations();
+                    ChooseNewDestination();
+                }
+                else
+                {
+                    ChooseNewDestination();
+                }
             }
-            else
+
+            if (!isRunningAway)
             {
-                ChooseNewDestination();
+                Vector3 predictedPosition = playerTransform.position;
+                Vector3 playerVelocity = playerTransform.GetComponent<Rigidbody>().velocity;
+
+                playerVelocity *= Time.deltaTime;
+                predictedPosition += playerVelocity;
+
+                transform.LookAt(predictedPosition);
             }
         }
-
-        if (!isRunningAway)
+        else
         {
-            Vector3 predictedPosition = playerTransform.position;
-            Vector3 playerVelocity = playerTransform.GetComponent<Rigidbody>().velocity;
-
-            playerVelocity *= Time.deltaTime;
-            predictedPosition += playerVelocity;
-            predictedPosition.x -= 0.65f;
-            predictedPosition.z -= 1f;
-
-            transform.LookAt(predictedPosition);
+            StartCoroutine(ReenableCharacter());
         }
     }
 
@@ -83,22 +92,51 @@ public class RangedEnemy : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.1f);
-            if (!bulletReady)
+            if (agent.enabled)
             {
-                yield return new WaitForSecondsRealtime(timeToReload);
-                bulletReady = true;
-            }
-            else if (!isRunningAway)
-            {
-                bulletReady = false;
-                GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
-                firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 10f;
-                yield return new WaitForSecondsRealtime(8f);
-                if (!firedProjectile.IsDestroyed())
+                if (!bulletReady)
                 {
-                    Object.Destroy(firedProjectile);
+                    yield return new WaitForSecondsRealtime(timeToReload);
+                    bulletReady = true;
+                }
+                else if (!isRunningAway)
+                {
+                    bulletReady = false;
+                    GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
+                    firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 10f;
+                    yield return new WaitForSecondsRealtime(8f);
+                    //This gives an error that IsDestroyed() doesn't exist, find a replacement for finding if the projectile is already destroyed.
+                    //if (!firedProjectile.IsDestroyed())
+                    //{
+                    //    Object.Destroy(firedProjectile);
+                    //}
                 }
             }
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Throwable") && other.gameObject.GetComponent<Rigidbody>().velocity != Vector3.zero)
+        {
+            agent.enabled = false;
+            properties.canBeGrabbed = true;
+            rb.constraints = RigidbodyConstraints.None;
+        }
+    }
+
+    private IEnumerator ReenableCharacter()
+    {
+        if (!properties.isGrabbed)
+        {
+            yield return new WaitForSecondsRealtime(6.5f);
+            agent.enabled = true;
+            properties.canBeGrabbed = false;
+            StopCoroutine(ReenableCharacter());
+        }
+        else
+        {
+            yield return null;
         }
     }
 }
