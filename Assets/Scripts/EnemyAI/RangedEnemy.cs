@@ -105,11 +105,10 @@ public class RangedEnemy : MonoBehaviour
                     GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
                     firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 10f;
                     yield return new WaitForSecondsRealtime(8f);
-                    //This gives an error that IsDestroyed() doesn't exist, find a replacement for finding if the projectile is already destroyed.
-                    //if (!firedProjectile.IsDestroyed())
-                    //{
-                    //    Object.Destroy(firedProjectile);
-                    //}
+                    if (firedProjectile)
+                    {
+                        Object.Destroy(firedProjectile);
+                    }
                 }
             }
         }
@@ -132,6 +131,7 @@ public class RangedEnemy : MonoBehaviour
             yield return new WaitForSecondsRealtime(6.5f);
             agent.enabled = true;
             properties.canBeGrabbed = false;
+            rb.constraints = RigidbodyConstraints.FreezePositionY;
             StopCoroutine(ReenableCharacter());
         }
         else

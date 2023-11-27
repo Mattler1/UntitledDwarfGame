@@ -55,6 +55,7 @@ public class MeleeEnemy : MonoBehaviour
             yield return new WaitForSecondsRealtime(6.5f);
             agent.enabled = true;
             properties.canBeGrabbed = false;
+            rb.constraints = RigidbodyConstraints.FreezePositionY;
             StopCoroutine(ReenableCharacter());
         }
         else
