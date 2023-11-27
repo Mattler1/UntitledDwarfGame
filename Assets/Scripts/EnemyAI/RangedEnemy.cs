@@ -116,7 +116,7 @@ public class RangedEnemy : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Throwable") && other.gameObject.GetComponent<Rigidbody>().velocity != Vector3.zero)
+        if (other.gameObject.CompareTag("Throwable") && other.rigidbody.velocity != Vector3.zero)
         {
             agent.enabled = false;
             properties.canBeGrabbed = true;
@@ -126,7 +126,7 @@ public class RangedEnemy : MonoBehaviour
 
     private IEnumerator ReenableCharacter()
     {
-        if (!properties.isGrabbed)
+        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, 1f, LayerMask.GetMask("Default")))
         {
             yield return new WaitForSecondsRealtime(6.5f);
             agent.enabled = true;

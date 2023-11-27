@@ -50,7 +50,7 @@ public class MeleeEnemy : MonoBehaviour
     }
     private IEnumerator ReenableCharacter()
     {
-        if (!properties.isGrabbed)
+        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, 1f, LayerMask.GetMask("Default")))
         {
             yield return new WaitForSecondsRealtime(6.5f);
             agent.enabled = true;
