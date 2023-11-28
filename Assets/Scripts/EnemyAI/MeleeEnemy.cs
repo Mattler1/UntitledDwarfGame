@@ -50,13 +50,16 @@ public class MeleeEnemy : MonoBehaviour
     }
     private IEnumerator ReenableCharacter()
     {
-        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, 1f, LayerMask.GetMask("Default")))
+        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
         {
-            yield return new WaitForSecondsRealtime(6.5f);
-            agent.enabled = true;
-            properties.canBeGrabbed = false;
-            rb.constraints = RigidbodyConstraints.FreezePositionY;
-            StopCoroutine(ReenableCharacter());
+            if (hit.transform.gameObject.CompareTag("Floor"))
+            {
+                yield return new WaitForSecondsRealtime(6.5f);
+                rb.constraints = RigidbodyConstraints.FreezePositionY;
+                agent.enabled = true;
+                properties.canBeGrabbed = false;
+                StopCoroutine(ReenableCharacter());
+            }
         }
         else
         {
