@@ -22,7 +22,7 @@ public class MeleeEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity) && !properties.canBeGrabbed)
+        if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity) && !properties.canBeGrabbed && agent.enabled)
         {
             if (hit.transform.gameObject.CompareTag("Player")) {
                 agent.SetDestination(playerTransform.position);
@@ -31,10 +31,6 @@ public class MeleeEnemy : MonoBehaviour
                 agent.SetDestination(lastRememberedPosition);
                 lastRememberedPosition = Vector3.zero;
             }
-        }
-        if (!agent.enabled)
-        {
-            StartCoroutine(ReenableCharacter());
         }
     }
 
@@ -46,6 +42,7 @@ public class MeleeEnemy : MonoBehaviour
             properties.canBeGrabbed = true;
             lastRememberedPosition = Vector3.zero;
             rb.constraints = RigidbodyConstraints.None;
+            StartCoroutine(ReenableCharacter());
         }
     }
     private IEnumerator ReenableCharacter()

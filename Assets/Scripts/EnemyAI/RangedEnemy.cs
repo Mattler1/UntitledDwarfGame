@@ -52,14 +52,12 @@ public class RangedEnemy : MonoBehaviour
                 Vector3 playerVelocity = playerTransform.GetComponent<Rigidbody>().velocity;
 
                 playerVelocity *= Time.deltaTime;
+                predictedPosition.x += 0.65f;
+                predictedPosition.z += 1f;
                 predictedPosition += playerVelocity;
 
                 transform.LookAt(predictedPosition);
             }
-        }
-        else
-        {
-            StartCoroutine(ReenableCharacter());
         }
     }
 
@@ -121,12 +119,13 @@ public class RangedEnemy : MonoBehaviour
             agent.enabled = false;
             properties.canBeGrabbed = true;
             rb.constraints = RigidbodyConstraints.None;
+            StartCoroutine(ReenableCharacter());
         }
     }
 
     private IEnumerator ReenableCharacter()
     {
-        if ((!properties.isGrabbed) && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
+        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
         {
             if (hit.transform.gameObject.CompareTag("Floor"))
             {
