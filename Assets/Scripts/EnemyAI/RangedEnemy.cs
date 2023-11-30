@@ -89,7 +89,6 @@ public class RangedEnemy : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.1f);
             if (agent.enabled)
             {
                 if (!bulletReady)
@@ -102,14 +101,21 @@ public class RangedEnemy : MonoBehaviour
                     bulletReady = false;
                     GameObject firedProjectile = Instantiate(projectileToFire, firePosition.position, transform.rotation);
                     firedProjectile.GetComponent<Rigidbody>().velocity = transform.forward * 10f;
-                    yield return new WaitForSecondsRealtime(8f);
-                    if (firedProjectile)
-                    {
-                        Object.Destroy(firedProjectile);
-                    }
+                    StartCoroutine(KillProjectile(firedProjectile));
                 }
             }
+            yield return null;
         }
+    }
+
+    private IEnumerator KillProjectile(GameObject projectile)
+    {
+        yield return new WaitForSecondsRealtime(8f);
+        if (projectile)
+        {
+            Object.Destroy(projectile);
+        }
+        StopCoroutine(KillProjectile(projectile));
     }
 
     private void OnCollisionEnter(Collision other)
@@ -125,13 +131,14 @@ public class RangedEnemy : MonoBehaviour
 
     private IEnumerator ReenableCharacter()
     {
-        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
+        yield return new WaitForSecondsRealtime(6.5f);
+        yield return new WaitUntil(() => !properties.isGrabbed);
+        properties.canBeGrabbed = false;
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
         {
             if (hit.transform.gameObject.CompareTag("Floor"))
             {
-                yield return new WaitForSecondsRealtime(6.5f);
                 agent.enabled = true;
-                properties.canBeGrabbed = false;
                 rb.constraints = RigidbodyConstraints.FreezePositionY;
                 StopCoroutine(ReenableCharacter());
             }
