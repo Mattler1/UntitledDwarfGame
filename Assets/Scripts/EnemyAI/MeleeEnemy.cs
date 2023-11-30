@@ -47,14 +47,15 @@ public class MeleeEnemy : MonoBehaviour
     }
     private IEnumerator ReenableCharacter()
     {
-        if (!properties.isGrabbed && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
+        yield return new WaitForSeconds(6.5f);
+        yield return new WaitUntil(() => !properties.isGrabbed);
+        properties.canBeGrabbed = false;
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
         {
             if (hit.transform.gameObject.CompareTag("Floor"))
             {
-                yield return new WaitForSecondsRealtime(6.5f);
                 rb.constraints = RigidbodyConstraints.FreezePositionY;
                 agent.enabled = true;
-                properties.canBeGrabbed = false;
                 StopCoroutine(ReenableCharacter());
             }
         }
