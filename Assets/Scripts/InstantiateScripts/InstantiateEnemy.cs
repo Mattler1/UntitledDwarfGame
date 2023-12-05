@@ -17,9 +17,9 @@ public class InstantiateEnemy : MonoBehaviour
 
     void Update()
     {
-        RaycastHit[] hits = playerBody.SweepTestAll(playerBody.transform.forward, playerBody.velocity, QueryTriggerInteraction.Collide);
+        RaycastHit[] hits = playerBody.SweepTestAll(playerBody.transform.forward, 5f, QueryTriggerInteraction.Collide);
 
-        for (int i = 0; i < hits.length; i++)
+        for (int i = 0; i < hits.Length; i++)
         {
             break;
         }
