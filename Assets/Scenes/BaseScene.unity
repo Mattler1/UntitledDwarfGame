@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -226,7 +226,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25486
+  m_Name: pb_Mesh23906
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3726,7 +3726,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23978
+  m_Name: pb_Mesh23980
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3890,7 +3890,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23952
+  m_Name: pb_Mesh23944
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7848,6 +7848,54 @@ Transform:
   m_Father: {fileID: 417467580}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1032452850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1032452852}
+  - component: {fileID: 1032452851}
+  m_Layer: 0
+  m_Name: EncounterManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1032452851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032452850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58fc813ead665c0428ea057806eabbab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomEnemies: []
+  enemySpawns: []
+  roomDoors: []
+  triggerObject: {fileID: 1349818139}
+--- !u!4 &1032452852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032452850}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.7, y: 0, z: 7.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1247239896
 GameObject:
   m_ObjectHideFlags: 0
@@ -7970,7 +8018,7 @@ Transform:
   m_GameObject: {fileID: 1349818138}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 13.79, y: 2.54, z: 6.95}
-  m_LocalScale: {x: 5, y: 5, z: 25}
+  m_LocalScale: {x: 10, y: 5, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7986,7 +8034,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1354078084}
   - component: {fileID: 1354078083}
-  - component: {fileID: 1354078085}
   m_Layer: 0
   m_Name: ScriptObject
   m_TagString: Untagged
@@ -8023,23 +8070,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1354078085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1354078082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14802c416b624a2478dfc30cf178a540, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemiesToSpawn:
-  - {fileID: 7636832869059817898, guid: 13da414e58dc9524e84a06152491f492, type: 3}
-  enemySpawnPositions:
-  - {fileID: 1247239897}
-  triggerObject: {fileID: 1349818139}
 --- !u!1 &1413220765
 GameObject:
   m_ObjectHideFlags: 0
@@ -8387,7 +8417,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh24012
+  m_Name: pb_Mesh24014
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9097,7 +9127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25504
+  m_Name: pb_Mesh23924
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
