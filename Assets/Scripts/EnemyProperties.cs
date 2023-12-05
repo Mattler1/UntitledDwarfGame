@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class EnemyProperties : MonoBehaviour
+public struct EnemyProperties
 {
-    public bool canBeGrabbed = false;
-    public bool isGrabbed = false;
-    public bool toDestroy = false;
+    public bool canBeGrabbed;
+    public bool isGrabbed;
+    public bool toDestroy;
 }

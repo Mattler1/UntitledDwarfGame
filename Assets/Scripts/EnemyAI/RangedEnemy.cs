@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class RangedEnemy : MonoBehaviour
 {
     private NavMeshAgent agent;
@@ -15,7 +16,8 @@ public class RangedEnemy : MonoBehaviour
     public GameObject projectileToFire;
     private Transform firePosition;
     private Rigidbody rb;
-    private EnemyProperties properties;
+    [Tooltip("The enemy's properties")]
+    public EnemyProperties properties;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +27,6 @@ public class RangedEnemy : MonoBehaviour
         StartCoroutine(PrepareBullet());
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezePositionY;
-        properties = GetComponent<EnemyProperties>();
     }
 
     // Update is called once per frame

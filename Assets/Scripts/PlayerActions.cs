@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerActions : MonoBehaviour
 {
+    [HideInInspector]
     public float moveSpeed = 5f;
+    [HideInInspector]
     public float rotationSpeed = 2f;
     public LayerMask layermask;
     private Camera playerCamera;
@@ -18,6 +21,7 @@ public class PlayerActions : MonoBehaviour
     private float mouseY = 0f;
 
     private GameObject victim;
+    [HideInInspector]
     public Transform holdPosition;
     // Start is called before the first frame update
     void Start()

@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class EncounterManager : MonoBehaviour
 {
-    /// <summary>
-    /// roomEnemies and enemySpawns must be the same length.
-    /// 
-    /// Each object in roomEnemies will be spawned at the corresponding transform in enemySpawns.
-    /// 
-    /// WARNING: You will notice objects disappearing while using this script. Don't worry about it, they return
-    /// after reloading the scene.
-    /// </summary>
+    [Header("Enemies and their spawn positions")]
+    [Tooltip("Size must be equal to enemySpawns")]
     public List<GameObject> roomEnemies;
+    [Tooltip("Size must be equal to roomEnemies")]
     public List<Transform> enemySpawns;
+    [Space(10)]
+
+    [Tooltip("The doors for the encounter's room")]
     public List<GameObject> roomDoors;
+    [Tooltip("The trigger that starts the encounter")]
     public Collider triggerObject;
     private GameObject player;
     private readonly Dictionary<GameObject, Transform> enemies;

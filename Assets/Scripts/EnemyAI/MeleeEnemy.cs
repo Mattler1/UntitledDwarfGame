@@ -2,19 +2,21 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class MeleeEnemy : MonoBehaviour
 {
     private NavMeshAgent agent;
     public Vector3 lastRememberedPosition = Vector3.zero;
     private Transform playerTransform;
-    private EnemyProperties properties;
+    [Tooltip("This enemy's properties")]
+    public EnemyProperties properties;
     private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
-        properties = GetComponent<EnemyProperties>();
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezePositionY;
     }

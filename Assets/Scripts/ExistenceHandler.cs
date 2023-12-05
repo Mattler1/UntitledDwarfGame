@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class ExistenceHandler : MonoBehaviour
 {
     private Vector3 checkPoint;
