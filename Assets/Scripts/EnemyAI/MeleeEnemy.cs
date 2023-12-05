@@ -36,7 +36,11 @@ public class MeleeEnemy : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Throwable") && other.gameObject.GetComponent<Rigidbody>().velocity != Vector3.zero)
+        if (properties.toDestroy)
+        {
+            Destroy(gameObject);
+        }
+        if (other.gameObject.CompareTag("Throwable") && other.gameObject.GetComponent<Rigidbody>().velocity != Vector3.zero && agent.enabled)
         {
             agent.enabled = false;
             properties.canBeGrabbed = true;

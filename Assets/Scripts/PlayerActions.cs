@@ -103,6 +103,7 @@ public class PlayerActions : MonoBehaviour
             if (victim.TryGetComponent(out EnemyProperties properties))
             {
                 properties.isGrabbed = false;
+                properties.toDestroy = true;
             }
             victim.GetComponent<Rigidbody>().velocity = playerCamera.transform.forward * throwForce;
             victim = null;
