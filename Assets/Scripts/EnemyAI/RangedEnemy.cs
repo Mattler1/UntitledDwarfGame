@@ -21,6 +21,9 @@ public class RangedEnemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        properties.isGrabbed = false;
+        properties.canBeGrabbed = false;
+        properties.toDestroy = false;
         firePosition = transform.Find("FirePosition");
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();

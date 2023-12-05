@@ -15,6 +15,9 @@ public class MeleeEnemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        properties.canBeGrabbed = false;
+        properties.isGrabbed = false;
+        properties.toDestroy = false;
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();

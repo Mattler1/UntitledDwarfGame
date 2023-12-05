@@ -16,13 +16,17 @@ public class EncounterManager : MonoBehaviour
     [Tooltip("The trigger that starts the encounter")]
     public Collider triggerObject;
     private GameObject player;
-    private readonly Dictionary<GameObject, Transform> enemies;
-    private readonly List<GameObject> livingEnemies;
+    private readonly Dictionary<GameObject, Transform> enemies = new();
+    private readonly List<GameObject> livingEnemies = new();
     private bool encounterStarted = false;
     private bool encounterFinished = false;
     // Start is called before the first frame update
     void Start()
     {
+        for (int i = 0; i < roomDoors.Count; i++)
+        {
+            roomDoors[i].SetActive(false);
+        }
         if (roomEnemies.Count != enemySpawns.Count)
         {
             Debug.LogError("roomEnemies and enemySpawns must be the same length!");
@@ -45,7 +49,7 @@ public class EncounterManager : MonoBehaviour
             Destroy(triggerObject);
             encounterStarted = true;
         }
-        if (livingEnemies.Count <= 0)
+        if (livingEnemies.Count <= 0 && encounterStarted)
         {
             encounterFinished = true;
         }
@@ -70,7 +74,7 @@ public class EncounterManager : MonoBehaviour
                 }
             }
         }
-        else if (encounterStarted)
+        else
         {
             for (int i = 0; i < livingEnemies.Count; i++)
             {

@@ -76,14 +76,18 @@ public class PlayerActions : MonoBehaviour
         {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 5f, layermask))
             {
-                if (hit.collider.gameObject.CompareTag("Throwable") || hit.collider.gameObject.CompareTag("Enemy") && hit.collider.gameObject.GetComponent<EnemyProperties>().canBeGrabbed)
+                if (hit.collider.gameObject.CompareTag("Throwable") || (hit.collider.gameObject.CompareTag("Enemy") && (hit.collider.gameObject.GetComponent<MeleeEnemy>().properties.canBeGrabbed || hit.collider.gameObject.GetComponent<RangedEnemy>().properties.canBeGrabbed)))
                 {
                     victim = hit.collider.gameObject;
                     if (victim.transform != playerTransform)
                     {
-                        if (victim.TryGetComponent(out EnemyProperties properties))
+                        if (victim.TryGetComponent(out MeleeEnemy meleeScript))
                         {
-                            properties.isGrabbed = true;
+                            meleeScript.properties.isGrabbed = true;
+                        }
+                        else if (victim.TryGetComponent(out RangedEnemy rangedScript))
+                        {
+                            rangedScript.properties.isGrabbed = true;
                         }
                         victim.transform.parent = holdPosition.transform;
                         victim.transform.rotation = playerTransform.rotation;
@@ -104,10 +108,15 @@ public class PlayerActions : MonoBehaviour
             {
                 obstacle.enabled = false;
             }
-            if (victim.TryGetComponent(out EnemyProperties properties))
+            if (victim.TryGetComponent(out MeleeEnemy meleeScript))
             {
-                properties.isGrabbed = false;
-                properties.toDestroy = true;
+                meleeScript.properties.isGrabbed = false;
+                meleeScript.properties.toDestroy = true;
+            }
+            else if (victim.TryGetComponent(out RangedEnemy rangedScript))
+            {
+                rangedScript.properties.isGrabbed = false;
+                rangedScript.properties.toDestroy = true;
             }
             victim.GetComponent<Rigidbody>().velocity = playerCamera.transform.forward * throwForce;
             victim = null;
@@ -122,9 +131,19 @@ public class PlayerActions : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Enemy"))
         {
-            if (other.gameObject.GetComponent<EnemyProperties>().canBeGrabbed)
+            if (other.gameObject.TryGetComponent(out MeleeEnemy meleeScript))
             {
-                canJump = true;
+                if (meleeScript.properties.canBeGrabbed)
+                {
+                    canJump = true;
+                }
+            }
+            else if (other.gameObject.TryGetComponent(out RangedEnemy rangedScript))
+            {
+                if (rangedScript.properties.canBeGrabbed)
+                {
+                    canJump = true;
+                }
             }
             else
             {
