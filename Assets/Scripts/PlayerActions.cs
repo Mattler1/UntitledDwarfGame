@@ -91,7 +91,7 @@ public class PlayerActions : MonoBehaviour
                         }
                         victim.transform.parent = holdPosition.transform;
                         victim.transform.rotation = playerTransform.rotation;
-                        Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponent<Collider>(), true);
+                        victim.GetComponent<Collider>().enabled = false;
                     }
                 }
             }
@@ -102,7 +102,7 @@ public class PlayerActions : MonoBehaviour
     {
         if (victim != null)
         {
-            Physics.IgnoreCollision(victim.GetComponent<Collider>(), playerTransform.GetComponent<Collider>(), false);
+            victim.GetComponent<Collider>().enabled = true;
             victim.transform.parent = null;
             if (victim.TryGetComponent(out NavMeshObstacle obstacle))
             {
@@ -145,18 +145,19 @@ public class PlayerActions : MonoBehaviour
                     canJump = true;
                 }
             }
-            else
-            {
-                hitsTaken += 1;
-                other.gameObject.GetComponent<NavMeshAgent>().enabled = false;
-                other.gameObject.GetComponent<Rigidbody>().AddForce((transform.position - other.transform.position).normalized * 10f);
-                other.gameObject.GetComponent<NavMeshAgent>().enabled = true;
-            }
         }
         else if (other.gameObject.CompareTag("Projectile"))
         {
             hitsTaken += 1;
             Object.Destroy(other.gameObject);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Hitbox"))
+        {
+            hitsTaken += 1;
         }
     }
 }

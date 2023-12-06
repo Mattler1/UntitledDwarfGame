@@ -9,15 +9,17 @@ public class MeleeEnemy : MonoBehaviour
     private NavMeshAgent agent;
     public Vector3 lastRememberedPosition = Vector3.zero;
     private Transform playerTransform;
-    [Tooltip("This enemy's properties")]
     public EnemyProperties properties;
     private Rigidbody rb;
+    private Collider hitbox;
     // Start is called before the first frame update
     void Start()
     {
         properties.canBeGrabbed = false;
         properties.isGrabbed = false;
         properties.toDestroy = false;
+        hitbox = transform.GetChild(1).gameObject.GetComponent<Collider>();
+        hitbox.enabled = false;
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
@@ -29,12 +31,24 @@ public class MeleeEnemy : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity) && !properties.canBeGrabbed && agent.enabled)
         {
-            if (hit.transform.gameObject.CompareTag("Player")) {
+            if (hit.transform.gameObject.CompareTag("Player")) 
+            {
                 agent.SetDestination(playerTransform.position);
                 lastRememberedPosition = playerTransform.position;
-            } else if (lastRememberedPosition != Vector3.zero) {
+            } 
+            else if (lastRememberedPosition != Vector3.zero) 
+            {
                 agent.SetDestination(lastRememberedPosition);
                 lastRememberedPosition = Vector3.zero;
+            }
+
+            if (hit.distance <= 1.5f)
+            {
+                hitbox.enabled = true;
+            }
+            else
+            {
+                hitbox.enabled = false;
             }
         }
     }

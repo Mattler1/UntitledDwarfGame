@@ -8,6 +8,7 @@ TagManager:
   - Throwable
   - Enemy
   - Projectile
+  - Hitbox
   layers:
   - Default
   - TransparentFX

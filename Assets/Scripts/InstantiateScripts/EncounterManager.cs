@@ -55,7 +55,7 @@ public class EncounterManager : MonoBehaviour
         }
         if (!encounterStarted)
         {
-            RaycastHit[] hits = player.GetComponent<Rigidbody>().SweepTestAll(player.transform.forward, 5f, QueryTriggerInteraction.Collide);
+            RaycastHit[] hits = player.GetComponent<Rigidbody>().SweepTestAll(player.transform.forward, player.GetComponent<PlayerActions>().moveSpeed, QueryTriggerInteraction.Collide);
 
             for (int i = 0; i < hits.Length; i++)
             {
