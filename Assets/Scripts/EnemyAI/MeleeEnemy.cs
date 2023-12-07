@@ -67,6 +67,17 @@ public class MeleeEnemy : MonoBehaviour
             rb.constraints = RigidbodyConstraints.None;
             StartCoroutine(ReenableCharacter());
         }
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            if (other.gameObject.GetComponent<MeleeEnemy>().properties.toDestroy || other.gameObject.GetComponent<RangedEnemy>().properties.toDestroy)
+            {
+                agent.enabled = false;
+                properties.canBeGrabbed = true;
+                lastRememberedPosition = Vector3.zero;
+                rb.constraints = RigidbodyConstraints.None;
+                StartCoroutine(ReenableCharacter());
+            }
+        }
     }
     private IEnumerator ReenableCharacter()
     {

@@ -76,9 +76,9 @@ public class PlayerActions : MonoBehaviour
         {
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 5f, layermask))
             {
-                if (hit.collider.gameObject.CompareTag("Throwable") || (hit.collider.gameObject.CompareTag("Enemy") && (hit.collider.gameObject.GetComponent<MeleeEnemy>().properties.canBeGrabbed || hit.collider.gameObject.GetComponent<RangedEnemy>().properties.canBeGrabbed)))
+                victim = hit.collider.gameObject;
+                if (victim.CompareTag("Throwable")) //(hit.collider.gameObject.TryGetComponent(out MeleeEnemy meleeScript).properties.canBeGrabbed || hit.collider.gameObject.TryGetComponent(out RangedEnemy rangedScript).properties.canBeGrabbed))
                 {
-                    victim = hit.collider.gameObject;
                     if (victim.transform != playerTransform)
                     {
                         if (victim.TryGetComponent(out MeleeEnemy meleeScript))
@@ -92,6 +92,15 @@ public class PlayerActions : MonoBehaviour
                         victim.transform.parent = holdPosition.transform;
                         victim.transform.rotation = playerTransform.rotation;
                         victim.GetComponent<Collider>().enabled = false;
+                    }
+                }
+                else if (victim.CompareTag("Enemy"))
+                {
+                    if (victim.TryGetComponent(out MeleeEnemy meleeScript))
+                    {
+                        meleeScript.properties.isGrabbed = true;
+                        victim.transform.parent = holdPosition.transform;
+                        victim.transform.rotation = playerTransform.rotation;
                     }
                 }
             }
@@ -149,6 +158,7 @@ public class PlayerActions : MonoBehaviour
         else if (other.gameObject.CompareTag("Projectile"))
         {
             hitsTaken += 1;
+            Debug.Log("Hit taken");
             Object.Destroy(other.gameObject);
         }
     }
@@ -157,6 +167,7 @@ public class PlayerActions : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Hitbox"))
         {
+            Debug.Log("Hit taken");
             hitsTaken += 1;
         }
     }

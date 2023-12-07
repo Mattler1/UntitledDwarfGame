@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class RangedEnemy : MonoBehaviour
 {
     private NavMeshAgent agent;
-    public float runDistance;
+    private readonly float runDistance = 2f;
     private Transform playerTransform;
     private readonly List<Vector3> destinations = new();
     private readonly float timeToReload = 5f;
@@ -16,7 +16,6 @@ public class RangedEnemy : MonoBehaviour
     public GameObject projectileToFire;
     private Transform firePosition;
     private Rigidbody rb;
-    [Tooltip("The enemy's properties")]
     public EnemyProperties properties;
     // Start is called before the first frame update
     void Start()
@@ -68,7 +67,7 @@ public class RangedEnemy : MonoBehaviour
     private void SetNewDestinations()
     {
         
-        if (Vector3.Distance(transform.position, playerTransform.position) <= runDistance * 1.5f)
+        if (Vector3.Distance(transform.position, playerTransform.position) <= runDistance)
         {
             isRunningAway = true;
             destinations.Clear();
@@ -77,8 +76,8 @@ public class RangedEnemy : MonoBehaviour
         else
         {
             isRunningAway = false;
-            destinations.Add(Vector3.Reflect(transform.position, (transform.right * -2f)));
-            destinations.Add(Vector3.Reflect(transform.position, (transform.right * 2f)));
+            destinations.Add(Vector3.Reflect(transform.position, (transform.right * -10f)));
+            destinations.Add(Vector3.Reflect(transform.position, (transform.right * 10f)));
         }
     }
 
@@ -130,6 +129,16 @@ public class RangedEnemy : MonoBehaviour
             properties.canBeGrabbed = true;
             rb.constraints = RigidbodyConstraints.None;
             StartCoroutine(ReenableCharacter());
+        }
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            if (other.gameObject.GetComponent<MeleeEnemy>().properties.toDestroy || other.gameObject.GetComponent<RangedEnemy>().properties.toDestroy)
+            {
+                agent.enabled = false;
+                properties.canBeGrabbed = true;
+                rb.constraints = RigidbodyConstraints.None;
+                StartCoroutine(ReenableCharacter());
+            }
         }
     }
 
