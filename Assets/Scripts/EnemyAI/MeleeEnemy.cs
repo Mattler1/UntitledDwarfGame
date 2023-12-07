@@ -61,33 +61,45 @@ public class MeleeEnemy : MonoBehaviour
         }
         if (other.gameObject.CompareTag("Throwable") && other.gameObject.GetComponent<Rigidbody>().velocity != Vector3.zero && agent.enabled)
         {
-            agent.enabled = false;
-            properties.canBeGrabbed = true;
-            lastRememberedPosition = Vector3.zero;
-            rb.constraints = RigidbodyConstraints.None;
-            StartCoroutine(ReenableCharacter());
+            TakeHit();
         }
         if (other.gameObject.CompareTag("Enemy"))
         {
-            if (other.gameObject.GetComponent<MeleeEnemy>().properties.toDestroy || other.gameObject.GetComponent<RangedEnemy>().properties.toDestroy)
+            if (other.gameObject.TryGetComponent(out MeleeEnemy meleeScript))
             {
-                agent.enabled = false;
-                properties.canBeGrabbed = true;
-                lastRememberedPosition = Vector3.zero;
-                rb.constraints = RigidbodyConstraints.None;
-                StartCoroutine(ReenableCharacter());
+                if (meleeScript.properties.toDestroy)
+                {
+                    TakeHit();
+                }
+            }
+            else if (other.gameObject.TryGetComponent(out RangedEnemy rangedScript))
+            {
+                if (rangedScript.properties.toDestroy)
+                {
+                    TakeHit();
+                }
             }
         }
     }
+
+    private void TakeHit()
+    {
+        agent.enabled = false;
+        properties.canBeGrabbed = true;
+        lastRememberedPosition = Vector3.zero;
+        rb.constraints = RigidbodyConstraints.None;
+        StartCoroutine(ReenableCharacter());
+    }
+
     private IEnumerator ReenableCharacter()
     {
         yield return new WaitForSeconds(6.5f);
         yield return new WaitUntil(() => !properties.isGrabbed);
-        properties.canBeGrabbed = false;
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
         {
             if (hit.transform.gameObject.CompareTag("Floor"))
             {
+                properties.canBeGrabbed = false;
                 rb.constraints = RigidbodyConstraints.FreezePositionY;
                 agent.enabled = true;
                 StopCoroutine(ReenableCharacter());

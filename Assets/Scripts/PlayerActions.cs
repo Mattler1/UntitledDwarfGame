@@ -77,34 +77,41 @@ public class PlayerActions : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, 5f, layermask))
             {
                 victim = hit.collider.gameObject;
-                if (victim.CompareTag("Throwable")) //(hit.collider.gameObject.TryGetComponent(out MeleeEnemy meleeScript).properties.canBeGrabbed || hit.collider.gameObject.TryGetComponent(out RangedEnemy rangedScript).properties.canBeGrabbed))
+                if (victim.transform != playerTransform)
                 {
-                    if (victim.transform != playerTransform)
+                    if (victim.CompareTag("Throwable"))
+                    {
+                        Grab();
+                    }
+                    else if (victim.CompareTag("Enemy"))
                     {
                         if (victim.TryGetComponent(out MeleeEnemy meleeScript))
                         {
-                            meleeScript.properties.isGrabbed = true;
+                            if (meleeScript.properties.canBeGrabbed)
+                            {
+                                meleeScript.properties.isGrabbed = true;
+                                Grab();
+                            }
                         }
                         else if (victim.TryGetComponent(out RangedEnemy rangedScript))
                         {
-                            rangedScript.properties.isGrabbed = true;
+                            if (rangedScript.properties.canBeGrabbed)
+                            {
+                                rangedScript.properties.isGrabbed = true;
+                                Grab();
+                            }
                         }
-                        victim.transform.parent = holdPosition.transform;
-                        victim.transform.rotation = playerTransform.rotation;
-                        victim.GetComponent<Collider>().enabled = false;
-                    }
-                }
-                else if (victim.CompareTag("Enemy"))
-                {
-                    if (victim.TryGetComponent(out MeleeEnemy meleeScript))
-                    {
-                        meleeScript.properties.isGrabbed = true;
-                        victim.transform.parent = holdPosition.transform;
-                        victim.transform.rotation = playerTransform.rotation;
                     }
                 }
             }
         }
+    }
+
+    private void Grab()
+    {
+        victim.transform.parent = holdPosition.transform;
+        victim.transform.rotation = playerTransform.rotation;
+        victim.GetComponent<Collider>().enabled = false;
     }
 
     private void ThrowObject()
@@ -157,8 +164,7 @@ public class PlayerActions : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Projectile"))
         {
-            hitsTaken += 1;
-            Debug.Log("Hit taken");
+            TakeHit();
             Object.Destroy(other.gameObject);
         }
     }
@@ -167,8 +173,19 @@ public class PlayerActions : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Hitbox"))
         {
-            Debug.Log("Hit taken");
-            hitsTaken += 1;
+            TakeHit();
+        }
+    }
+
+    private void TakeHit()
+    {
+        hitsTaken += 1;
+        Debug.Log("Hit taken");
+
+        if (hitsTaken >= maxHits)
+        {
+            Debug.Log("YOU HAVE NOW FACED SAM WATKINS' FATE. GOODBYE.");
+            //We need some way to end the player's life.
         }
     }
 }

@@ -55,8 +55,16 @@ public class RangedEnemy : MonoBehaviour
                 Vector3 playerVelocity = playerTransform.GetComponent<Rigidbody>().velocity;
 
                 playerVelocity *= Time.deltaTime;
-                predictedPosition.x += 0.65f;
-                predictedPosition.z += 1f;
+                if (transform.rotation.y < 0)
+                {
+                    predictedPosition.x += 0.65f;
+                    predictedPosition.z += 1f;
+                }
+                else
+                {
+                    predictedPosition.x -= 0.65f;
+                    predictedPosition.z -= 1f;
+                }
                 predictedPosition += playerVelocity;
 
                 transform.LookAt(predictedPosition);
@@ -123,34 +131,50 @@ public class RangedEnemy : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+        if (properties.toDestroy)
+        {
+            Destroy(gameObject);
+        }
         if (other.gameObject.CompareTag("Throwable") && other.rigidbody.velocity != Vector3.zero)
         {
-            agent.enabled = false;
-            properties.canBeGrabbed = true;
-            rb.constraints = RigidbodyConstraints.None;
-            StartCoroutine(ReenableCharacter());
+            TakeHit();
         }
         if (other.gameObject.CompareTag("Enemy"))
         {
-            if (other.gameObject.GetComponent<MeleeEnemy>().properties.toDestroy || other.gameObject.GetComponent<RangedEnemy>().properties.toDestroy)
+            if (other.gameObject.TryGetComponent(out MeleeEnemy meleeScript))
             {
-                agent.enabled = false;
-                properties.canBeGrabbed = true;
-                rb.constraints = RigidbodyConstraints.None;
-                StartCoroutine(ReenableCharacter());
+                if (meleeScript.properties.toDestroy)
+                {
+                    TakeHit();
+                }
+            }
+            else if (other.gameObject.TryGetComponent(out RangedEnemy rangedScript))
+            {
+                if (rangedScript.properties.toDestroy)
+                {
+                    TakeHit();
+                }
             }
         }
+    }
+
+    private void TakeHit()
+    {
+        agent.enabled = false;
+        properties.canBeGrabbed = true;
+        rb.constraints = RigidbodyConstraints.None;
+        StartCoroutine(ReenableCharacter());
     }
 
     private IEnumerator ReenableCharacter()
     {
         yield return new WaitForSecondsRealtime(6.5f);
         yield return new WaitUntil(() => !properties.isGrabbed);
-        properties.canBeGrabbed = false;
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
         {
             if (hit.transform.gameObject.CompareTag("Floor"))
             {
+                properties.canBeGrabbed = false;
                 agent.enabled = true;
                 rb.constraints = RigidbodyConstraints.FreezePositionY;
                 StopCoroutine(ReenableCharacter());
