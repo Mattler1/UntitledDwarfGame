@@ -1,25 +1,27 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
-public class MeleeEnemy : MonoBehaviour
+public class GrapplerFishBehaviour : MonoBehaviour
 {
     private NavMeshAgent agent;
     public Vector3 lastRememberedPosition = Vector3.zero;
     private Transform playerTransform;
     public EnemyProperties properties;
     private Rigidbody rb;
-    private Collider hitbox;
+    [HideInInspector]
+    public Collider grabBox;
     // Start is called before the first frame update
     void Start()
     {
         properties.canBeGrabbed = false;
         properties.isGrabbed = false;
         properties.toDestroy = false;
-        hitbox = transform.GetChild(1).gameObject.GetComponent<Collider>();
-        hitbox.enabled = false;
+        grabBox = transform.GetChild(3).gameObject.GetComponent<Collider>();
+        grabBox.enabled = false;
         agent = GetComponent<NavMeshAgent>();
         playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
@@ -31,24 +33,15 @@ public class MeleeEnemy : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, (playerTransform.position - transform.position).normalized, out RaycastHit hit, Mathf.Infinity) && !properties.canBeGrabbed && agent.enabled)
         {
-            if (hit.transform.gameObject.CompareTag("Player")) 
+            if (hit.transform.gameObject.CompareTag("Player"))
             {
                 agent.SetDestination(playerTransform.position);
                 lastRememberedPosition = playerTransform.position;
-            } 
-            else if (lastRememberedPosition != Vector3.zero) 
+            }
+            else if (lastRememberedPosition != Vector3.zero)
             {
                 agent.SetDestination(lastRememberedPosition);
                 lastRememberedPosition = Vector3.zero;
-            }
-
-            if (hit.distance <= 1.5f)
-            {
-                hitbox.enabled = true;
-            }
-            else
-            {
-                hitbox.enabled = false;
             }
         }
     }
@@ -89,20 +82,6 @@ public class MeleeEnemy : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Hitbox"))
-        {
-            if (other.gameObject.name == "Grab")
-            {
-                agent.enabled = false;
-                lastRememberedPosition = Vector3.zero;
-                transform.parent = other.gameObject.transform;
-                properties.toDestroy = true;
-            }
-        }
-    }
-
     private void TakeHit()
     {
         agent.enabled = false;
@@ -116,7 +95,7 @@ public class MeleeEnemy : MonoBehaviour
     {
         yield return new WaitForSeconds(6.5f);
         yield return new WaitUntil(() => !properties.isGrabbed);
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f))
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.3f))
         {
             if (hit.transform.gameObject.CompareTag("Floor"))
             {

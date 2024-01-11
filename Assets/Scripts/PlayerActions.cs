@@ -134,6 +134,12 @@ public class PlayerActions : MonoBehaviour
                 rangedScript.properties.isGrabbed = false;
                 rangedScript.properties.toDestroy = true;
             }
+            else if (victim.TryGetComponent(out GrapplerFishBehaviour fishScript))
+            {
+                fishScript.properties.isGrabbed = false;
+                fishScript.properties.toDestroy = true;
+                fishScript.grabBox.enabled = true;
+            }
             victim.GetComponent<Rigidbody>().velocity = playerCamera.transform.forward * throwForce;
             victim = null;
         }
@@ -173,7 +179,9 @@ public class PlayerActions : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Hitbox"))
         {
-            TakeHit();
+            if (other.gameObject.name == "Hitbox") {
+                TakeHit();
+            }
         }
     }
 

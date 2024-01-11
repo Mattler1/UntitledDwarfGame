@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class RangedEnemy : MonoBehaviour
 {
     private NavMeshAgent agent;
@@ -164,6 +165,19 @@ public class RangedEnemy : MonoBehaviour
         properties.canBeGrabbed = true;
         rb.constraints = RigidbodyConstraints.None;
         StartCoroutine(ReenableCharacter());
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Hitbox"))
+        {
+            if (other.gameObject.name == "Grab")
+            {
+                agent.enabled = false;
+                transform.parent = other.gameObject.transform;
+                properties.toDestroy = true;
+            }
+        }
     }
 
     private IEnumerator ReenableCharacter()
